@@ -39,8 +39,6 @@ categorical = ["holiday", "locale", "transferred"]
 
 # Set up prediction container
 with st.expander("Make a prediction", expanded=True):
-    
-    # Define Streamlit inputs
     date = st.date_input(label="Enter a date")
     holiday = st.selectbox(label="Select a category of holiday", options=['Holiday', 'Not Holiday', 'WorkDay', 'Additional', 'Event', 'Transfer', 'Bridge'])
     locale = st.radio(label="Select a holiday type", options=['National', 'Not Holiday', 'Local', 'Regional'], horizontal=True)
