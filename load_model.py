@@ -10,10 +10,44 @@ from PIL import Image
 import joblib
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
+from torch import nn
+from torch.nn import functional as F
+import torchvision.transforms.functional as Fv
 
 from segtools.data import Compose, Resize_single, ToTensor_single, Normalize_single, SelectClasses
 from segtools.model import DeepLab, forward_extract
 from segtools.classes import classes
+
+imagenet_mean = torch.tensor([0.485, 0.456, 0.406])
+imagenet_std = torch.tensor([0.229, 0.224, 0.225])
+
+class Resize:
+  def __init__(self, size):
+    self.size = size
+
+  def __call__(self, x, y):
+    x = Fv.resize(x, self.size, Image.BILINEAR)
+    y = Fv.resize(y, self.size, Image.NEAREST)
+    return x, y
+  
+class ToTensor:
+  def __call__(self, x, y):
+    return Fv.to_tensor(x), torch.from_numpy(np.array(y, dtype=np.uint8))
+
+class Normalize:
+  def __init__(self, mu, sigma):
+    self.mu, self.sigma = mu, sigma
+
+  def __call__(self, x, y):
+    return Fv.normalize(x, self.mu, self.sigma), y
+
+val_transform = Compose([
+    Resize((224, 224)),
+    ToTensor(),
+    Normalize(imagenet_mean, imagenet_std),
+    SelectClasses(list(classes.keys()))
+])
 
 def preprocess_image(image_path, val_transform):
     # Load and transform the image
