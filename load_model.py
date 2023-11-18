@@ -11,7 +11,7 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from segtools.data import Compose, Resize, ToTensor, Normalize, SelectClasses
+from segtools.data import Compose, Resize_single, ToTensor_single, Normalize_single, SelectClasses
 from segtools.model import DeepLab, forward_extract
 from segtools.classes import classes
 
@@ -57,39 +57,43 @@ def colorize(image, array):
   new_im = Image.fromarray(new_im.astype(np.uint8))
   return Image.blend(image, new_im, alpha=0.8) 
 
-def display_results(image_path, target, pred):
-    # Display the original image, ground truth, and prediction
+def display_results(image_path, pred):
+    # Display the original image and prediction
     image_jpg = Image.open(image_path).resize((224, 224))
-    plt.figure(figsize=(12, 8))
-    plt.subplot(1, 3, 1)
+    plt.figure(figsize=(8, 4))
+    plt.subplot(1, 2, 1)
     plt.imshow(image_jpg)
-    plt.subplot(1, 3, 2)
-    plt.imshow(colorize(image_jpg, target[..., None]))
-    plt.subplot(1, 3, 3)
+    plt.title("Original Image")
+    plt.subplot(1, 2, 2)
     plt.imshow(colorize(image_jpg, pred[0][..., None]))
+    plt.title("Predicted Segmentation")
     plt.show()
 
-if __name__ == "__main__":
-    path = "2007_000346"
-    model_path = "models/model.pth"
-    image_path = f"/home/pili/scia/MLopsProject/VOCdevkit/VOC2012/JPEGImages/{path}.jpg"  # Replace with your image path
-    target_path = f"VOCdevkit/VOC2012/SegmentationClass/{path}.png"  # Replace with your target path
-
+def pred_using_model(image_path, model_path):
     # Define your val_transform here (same as used during training)
     val_transform = Compose([
-        Resize((224, 224)),
-        ToTensor(),
-        Normalize(torch.tensor([0.485, 0.456, 0.406]), torch.tensor([0.229, 0.224, 0.225])),
-        SelectClasses(list(classes.keys()))
+        Resize_single((224, 224)),
+        ToTensor_single(),
+        Normalize_single(torch.tensor([0.485, 0.456, 0.406]), torch.tensor([0.229, 0.224, 0.225])),
+        #SelectClasses(list(classes.keys()))
     ])
 
     model = DeepLab(len(classes) + 1).cuda()  # Initialize model architecture
     model.load_state_dict(torch.load(model_path))
-    model.eval()
-    image = Image.open(image_path).convert("RGB")
-    image, target = val_transform(image, Image.open(target_path))
 
+    image = Image.open(image_path).convert("RGB")
+    image = val_transform(image)  # Only transform the image, no target is needed
+
+    model.eval()
     with torch.no_grad():
         pred = model(image.cuda()[None]).cpu().argmax(dim=1).numpy().astype(np.uint8)
 
-    display_results(image_path, target, pred)
+    return pred
+
+if __name__ == "__main__":
+    image_path = "/home/pili/scia/MLopsProject/858740002.jpg"
+    model_path = "models/model.pth"
+
+    pred = pred_using_model(image_path, model_path)
+
+    display_results(image_path, pred)

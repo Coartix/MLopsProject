@@ -43,10 +43,13 @@ class Compose:
   def __init__(self, transforms):
     self.transforms = transforms
 
-  def __call__(self, x, y):
-    for t in self.transforms:
-      x, y = t(x, y)
-    return x, y
+  def __call__(self, x, y=None):
+      for t in self.transforms:
+          if y is not None:
+              x, y = t(x, y)
+          else:
+              x = t(x)
+      return x if y is None else (x, y)
 
 
 class Resize:
@@ -57,6 +60,14 @@ class Resize:
     x = Fv.resize(x, self.size, Image.BILINEAR)
     y = Fv.resize(y, self.size, Image.NEAREST)
     return x, y
+
+class Resize_single:
+  def __init__(self, size):
+    self.size = size
+
+  def __call__(self, x, y=None):
+    x = Fv.resize(x, self.size, Image.BILINEAR)
+    return x
 
 
 class RandomHorizontalFlip:
@@ -70,6 +81,10 @@ class ToTensor:
   def __call__(self, x, y):
     return Fv.to_tensor(x), torch.from_numpy(np.array(y, dtype=np.uint8))
 
+class ToTensor_single:
+  def __call__(self, x):
+      x = Fv.to_tensor(x)
+      return x
 
 class Normalize:
   def __init__(self, mu, sigma):
@@ -77,6 +92,15 @@ class Normalize:
 
   def __call__(self, x, y):
     return Fv.normalize(x, self.mu, self.sigma), y
+
+class Normalize_single:
+  def __init__(self, mean, std):
+      self.mean = mean
+      self.std = std
+
+  def __call__(self, x):
+      x = Fv.normalize(x, self.mean, self.std)
+      return x
 
 
 class RandomResizedCrop:
