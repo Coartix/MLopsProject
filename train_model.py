@@ -20,6 +20,7 @@ import subprocess
 from segtools.data import Dataset, SelectClasses, Compose, Resize, RandomHorizontalFlip, ToTensor, Normalize, RandomResizedCrop
 from segtools.model import DeepLab
 from segtools.iou import confusion_matrix, get_miou, test_iou
+from segtools.classes import classes
 
 # download data
 def download_and_extract(url, tar_file):
@@ -45,28 +46,6 @@ for url, tar_file in downloads:
 
 # define dataset
 paths = []
-classes = {
-    #1: 'aeroplane',
-    #2: 'bicycle',
-    #3: 'bird',
-    #4: 'boat',
-    #5: 'bottle',
-    #6: 'bus',
-    #7: 'car',
-    #8: 'cat',
-    #9: 'chair',
-    #10: 'cow',
-    #11: 'diningtable',
-    12: 'dog',
-    #13: 'horse',
-    #14: 'motorbike',
-    15: 'person',
-    #16: 'pottedplant',
-    #17: 'sheep',
-    #18: 'sofa',
-    #19: 'train',
-    #20: 'tvmonitor'
-}
 
 for gt_path in glob.glob("VOCdevkit/VOC2012/SegmentationClass/*png"):
   img = np.array(Image.open(gt_path)).reshape(-1)
@@ -170,4 +149,4 @@ for i, class_name in enumerate(classes.values(), start=1):
   print(f"\t{class_name} mIoU: {test_mious[i]}")
 
 # save model
-joblib.dump(model, "models/model.joblib")
+torch.save(model.state_dict(), 'models/model.pth')
