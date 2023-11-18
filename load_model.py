@@ -50,7 +50,7 @@ def color_map(N=256, normalized=False):
 voc_colormap = color_map()[:, None, :]
 
 
-def colorize(image, array):
+def colorize(image, array) -> Image:
   new_im = np.dot(array == 0, voc_colormap[0])
   for i in range(1, voc_colormap.shape[0]):
     new_im += np.dot(array == i, voc_colormap[i])
@@ -69,7 +69,7 @@ def display_results(image_path, pred):
     plt.title("Predicted Segmentation")
     plt.show()
 
-def pred_using_model(image_path, model_path):
+def pred_using_model(image_data, model_path):
     # Define your val_transform here (same as used during training)
     val_transform = Compose([
         Resize_single((224, 224)),
@@ -81,19 +81,11 @@ def pred_using_model(image_path, model_path):
     model = DeepLab(len(classes) + 1).cuda()  # Initialize model architecture
     model.load_state_dict(torch.load(model_path))
 
-    image = Image.open(image_path).convert("RGB")
-    image = val_transform(image)  # Only transform the image, no target is needed
+    real_image = Image.fromarray(np.array(image_data, dtype=np.uint8)).convert("RGB")
+    image = val_transform(real_image)  # Only transform the image, no target is needed
 
     model.eval()
     with torch.no_grad():
         pred = model(image.cuda()[None]).cpu().argmax(dim=1).numpy().astype(np.uint8)
 
-    return pred
-
-if __name__ == "__main__":
-    image_path = "/home/pili/scia/MLopsProject/858740002.jpg"
-    model_path = "models/model.pth"
-
-    pred = pred_using_model(image_path, model_path)
-
-    display_results(image_path, pred)
+    return colorize(real_image.resize((224,224)), pred[0][..., None]).convert("RGB")

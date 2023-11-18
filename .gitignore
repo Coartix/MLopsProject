@@ -1,2 +1,4 @@
 VOCdevkit
 VOC*
+*.pyc
+models/

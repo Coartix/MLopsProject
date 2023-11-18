@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from load_model import pred_using_model
 import numpy as np
 
 app = FastAPI()
@@ -9,13 +10,9 @@ class Image(BaseModel):
     image: list
 
 @app.post("/segment")
-async def segment_image(image: Image):
-    # Simulate some asynchronous processing (replace with actual logic)
-    import asyncio
-    await asyncio.sleep(2)
+def segment_image(image: Image):
+    # Create thread to run the model
+    pred = pred_using_model(image.image, "models/model.pth")
+    image.image = np.array(pred).tolist()
 
-    # return the image list to test the API
     return {"image": image.image}
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)

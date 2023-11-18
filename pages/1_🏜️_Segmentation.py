@@ -25,7 +25,7 @@ with header:
     header.write("On this page, you can segment your images")
 
 
-###### Set up prediction container #####
+###### Set up prediction container ######
 
 with st.expander("Make a segmentation", expanded=True):
     # Create input fields of an image
