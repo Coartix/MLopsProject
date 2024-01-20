@@ -7,7 +7,7 @@ from PIL import Image
 import requests
 
 def send_request(image: np.ndarray):
-    url = "http://0.0.0.0:8000/segment"
+    url = "http://127.0.0.1:8000/segment"
     payload = {
         "image": image.tolist()
     }

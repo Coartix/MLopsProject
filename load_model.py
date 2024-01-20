@@ -14,6 +14,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 import torchvision.transforms.functional as Fv
+from Autoencoder import Autoencoder, transform
+
 
 from segtools.data import Compose, Resize_single, ToTensor_single, Normalize_single, SelectClasses
 from segtools.model import DeepLab, forward_extract
@@ -123,3 +125,25 @@ def pred_using_model(image_data, model_path):
         pred = model(image.cuda()[None]).cpu().argmax(dim=1).numpy().astype(np.uint8)
 
     return colorize(real_image.resize((224,224)), pred[0][..., None]).convert("RGB")
+
+def similarity_using_ae(image_data, model_path):
+    # Load the autoencoder model
+    autoencoder = Autoencoder()
+    autoencoder.load_state_dict(torch.load(model_path))
+    autoencoder.eval()
+
+    # Convert the image data to PIL image and apply transform
+    image = Image.fromarray(np.array(image_data, dtype=np.uint8)).convert("RGB")
+    image = transform(image).unsqueeze(0)  # Add batch dimension
+
+    # Move image to the same device as the model
+    device = next(autoencoder.parameters()).device
+    image = image.to(device)
+
+    # Process the image using the autoencoder
+    with torch.no_grad():
+        reconstructed_image = autoencoder(image)
+
+    # Compute similarity (reconstruction error)
+    error = torch.mean((image - reconstructed_image) ** 2)
+    return error.item()

@@ -1,9 +1,7 @@
-##Load libraries
 import streamlit as st
 import streamlit as st
 from PIL import Image
 
-# Display the c title
 st.title("Learn About Team pili coartix")
 
 

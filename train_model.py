@@ -61,7 +61,7 @@ with open("VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt", "r") as f:
 with open("VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt", "r") as f:
   val_ids = set(map(lambda x: x.strip(), f.readlines()))
 
-  imagenet_mean = torch.tensor([0.485, 0.456, 0.406])
+imagenet_mean = torch.tensor([0.485, 0.456, 0.406])
 imagenet_std = torch.tensor([0.229, 0.224, 0.225])
 
 val_transform = Compose([
