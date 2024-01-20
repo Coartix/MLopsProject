@@ -1,1 +1,12 @@
 numpy
+torch
+PIL
+torchvision
+glob
+joblib
+matplotlib
+streamlit
+streamlit_lottie
+uvicorn
+fastapi
+pydantic
