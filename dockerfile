@@ -18,5 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
-
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "api:app", "--bind", "0.0.0.0:8000", "--timeout", "1000"]
+
+# docker build -t mlops-backend .
+# docker run --gpus all -p 8000:8000 --name mlops-container -t mlops-backend
