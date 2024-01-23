@@ -47,6 +47,7 @@ st.write('<div class="slide-in-animation">17. Dining Table</div>', unsafe_allow_
 st.write('<div class="slide-in-animation">18. Potted Plant</div>', unsafe_allow_html=True)
 st.write('<div class="slide-in-animation">19. Sofa</div>', unsafe_allow_html=True)
 st.write('<div class="slide-in-animation">20. TV/Monitor</div>', unsafe_allow_html=True)
+st.write('<div class="slide-in-animation"><br/>Check the segtools/classes.py for the object(s) actually used.</div>', unsafe_allow_html=True)
 
 subheader_container = st.container()
 subheader_content = """
@@ -54,7 +55,7 @@ subheader_content = """
 <h3>Things You Can Do On This App:</h3>
 <ul>
   <li>Use our semantic segmentation on images containing such classes</li>
-  <li>View the dataset and train the model</li>
+  <li>Get the similarity shift on an image from the training dataset</li>
   <li>Get to know more about the team behind this app</li>
 </ul>
 </div>

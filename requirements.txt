@@ -1,12 +1,13 @@
 numpy
 torch
-PIL
+Pillow
 torchvision
-glob
+glob2
 joblib
 matplotlib
 streamlit
-streamlit_lottie
+streamlit-lottie
 uvicorn
+gunicorn
 fastapi
 pydantic

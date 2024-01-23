@@ -23,6 +23,5 @@ if uploaded_image is not None:
     # Send the image to the API
     if st.button('Check Similarity'):
         response = send_request(image)
-        print(response)
         similarity = response['similarity']
         st.write(f'The similarity is {similarity:.2f}')

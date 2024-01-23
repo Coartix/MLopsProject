@@ -15,3 +15,12 @@ st.header("Pierre Litoux: Data Scientist")
 ##Hugo's info
 st.header("Hugo Deplagne: Data Scientist")
 
+
+im_example = Image.open("images/output.png").resize((900, 400))
+
+st.title("Here is a set from the VOC dataset:")
+st.image(im_example)
+
+st.title("The model we used:")
+st.image("images/deeplab.jpg")
+
