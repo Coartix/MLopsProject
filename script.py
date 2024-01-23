@@ -24,16 +24,16 @@ if __name__ == "__main__":
     parser.add_argument('--train', action='store_true', help='Train the model if set')
     args = parser.parse_args()
 
+    # Train models if requested
+    if args.train:
+        train_models()
+
     # Start Streamlit and Gunicorn
     streamlit_process = start_streamlit()
     gunicorn_process = start_gunicorn()
 
     # Handle CTRL+C
     signal.signal(signal.SIGINT, signal_handler)
-
-    # Train models if requested
-    if args.train:
-        train_models()
 
     # Wait for subprocesses
     streamlit_process.wait()

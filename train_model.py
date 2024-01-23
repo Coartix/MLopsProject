@@ -122,7 +122,7 @@ model = DeepLab(len(classes) + 1).cuda()
 
 # train model
 optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
-epochs = 1
+epochs = 10
 
 for epoch in range(epochs):
   _loss, c = 0., 0
